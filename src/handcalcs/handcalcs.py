@@ -1258,6 +1258,8 @@ def latex_repr(
             rendered_string = f"{item:.{precision}e{preferred_formatter}}"
         else:
             rendered_string = f"{item:.{precision}f{preferred_formatter}}"
+            if isinstance(item, float) and item != 0 and round(item, precision) == 0:
+                rendered_string = swap_scientific_notation_str(f"{item:.{precision}e}")
     except (ValueError, TypeError):
         try:
             if use_scientific_notation and isinstance(item, complex):
@@ -1275,6 +1277,8 @@ def latex_repr(
                 rendered_string = swap_scientific_notation_str(rendered_string)
             elif not isinstance(item, int):
                 rendered_string = f"{item:.{precision}f}"
+                if isinstance(item, float) and item != 0 and round(item, precision) == 0:
+                    rendered_string = swap_scientific_notation_str(f"{item:.{precision}e}")
             else:
                 rendered_string = str(item)
         except (ValueError, TypeError):

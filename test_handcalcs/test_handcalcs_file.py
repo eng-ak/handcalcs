@@ -1889,3 +1889,24 @@ def test_for_numeric_line():
         )
         == True
     )
+
+
+# Auto scientific notation tests
+
+
+def test_latex_repr_auto_sci_notation():
+    latex_repr = handcalcs.handcalcs.latex_repr
+    # Non-zero values that round to zero auto-switch to scientific notation
+    assert latex_repr(0.000250, False, 3, "") == "2.500 \\times 10 ^ {-4}"
+    assert latex_repr(0.0001,   False, 3, "") == "1.000 \\times 10 ^ {-4}"
+    assert latex_repr(0.00049,  False, 3, "") == "4.900 \\times 10 ^ {-4}"
+    # True zero stays as zero
+    assert latex_repr(0.0, False, 3, "") == "0.000"
+    # Values representable at given precision are unaffected
+    assert latex_repr(0.001,  False, 3, "") == "0.001"  # round(0.001, 3) = 0.001 != 0
+    assert latex_repr(11.0,   False, 3, "") == "11.000"
+    assert latex_repr(1.567,  False, 3, "") == "1.567"
+    # Integers are unaffected — isinstance check prevents auto-switch
+    assert latex_repr(0, False, 3, "L") == "0"
+    # Scientific notation mode — auto-switch logic is not applied
+    assert latex_repr(0.000250, True, 3, "") == "2.500e-04"
